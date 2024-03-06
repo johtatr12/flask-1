@@ -1,21 +1,29 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///players.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# 앱과 데이터베이스 설정 후
+migrate = Migrate(app, db)
 
 class Player(db.Model):
+    __tablename__ = 'player'  # 테이블 이름 명시
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     grade = db.Column(db.String(20), nullable=False)
     position = db.Column(db.String(30), nullable=False)
+    photo_url = db.Column(db.String(255), nullable=True)  # 선수 사진 URL 추가
+    records = relationship('Record', backref='player', lazy=True)  # Player와 Record 사이의 관계 명시
 
 class Record(db.Model):
+    __tablename__ = 'record'  # 테이블 이름 명시
     id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)  # 정확한 참조
     at_bats = db.Column(db.Integer, nullable=False)
     runs = db.Column(db.Integer, nullable=False)
     hits = db.Column(db.Integer, nullable=False)
@@ -43,5 +51,5 @@ def player(player_id):
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        db.create_all()  # 데이터베이스 테이블 생성
     app.run(debug=True)

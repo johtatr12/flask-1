@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ player.name }}의 프로필</title>
+</head>
+<body>
+    <h1>{{ player.name }}의 프로필</h1>
+    <img src="{{ player.photo_url }}" alt="{{ player.name }}의 사진" style="width:200px; height:auto;">
+    <p>학년: {{ player.grade }}</p>
+    <p>포지션: {{ player.position }}</p>
+
+    <h2>기록</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>타수</th>
+                <th>득점</th>
+                <th>안타</th>
+                <th>2루타</th>
+                <th>3루타</th>
+                <th>홈런</th>
+                <th>타점</th>
+                <th>볼넷</th>
+                <th>삼진</th>
+                <th>타율</th>
+                <th>출루율</th>
+                <th>장타율</th>
+                <th>OPS</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>{{ record.at_bats }}</td>
+                    <td>{{ record.runs }}</td>
+                    <td>{{ record.hits }}</td>
+                    <td>{{ record.doubles }}</td>
+                    <td>{{ record.triples }}</td>
+                    <td>{{ record.home_runs }}</td>
+                    <td>{{ record.rbis }}</td>
+                    <td>{{ record.walks }}</td>
+                    <td>{{ record.strikeouts }}</td>
+                    <td>{{ '%.3f' | format(record.batting_average) }}</td>
+                    <td>{{ '%.3f' | format(record.on_base_percentage) }}</td>
+                    <td>{{ '%.3f' | format(record.slugging_percentage) }}</td>
+                    <td>{{ '%.3f' | format(record.ops) }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('index') }}">돌아가기</a>
+</body>
+</html>
+

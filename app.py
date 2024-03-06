@@ -6,6 +6,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///players.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -29,10 +30,6 @@ class Record(db.Model):
     slugging_percentage = db.Column(db.Float, nullable=False)
     ops = db.Column(db.Float, nullable=False)
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
 @app.route('/')
 def index():
     players = Player.query.all()
@@ -45,4 +42,6 @@ def player(player_id):
     return render_template('player.html', player=player, records=records)
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
